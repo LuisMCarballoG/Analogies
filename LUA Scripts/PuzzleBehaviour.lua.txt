@@ -1,0 +1,38 @@
+﻿local screenPoint;
+local offset;
+local dragged = false;
+local validDrag = false;
+
+local Direction = {
+    None = 0,
+    Left = 1,
+    Right = 2,
+    Up = 3,
+    Down = 4
+}
+
+local swipeDirection;
+local answer;
+reset = false;
+local option = 0;
+local targerPos = Nil;
+onClicked = false;
+
+initPos = 0;
+firtTimeInteraction = false;
+correct = false;
+
+function OnSpawn ()    
+    
+end
+
+function setOption (param, position)
+    option = param;
+    targetPos = position.position;
+    targetRot = position.rotation;
+end
+
+function setCorrect (param)
+    correct = true;
+    local feedback = Nil;
+end

@@ -1,0 +1,45 @@
+﻿local rotating; 
+local startVector;
+local rotGestureWidth = 5;
+local rotAngleMinimum = 1;
+local rot = 0;
+local locked = false;
+local onTravel = false;
+
+function OnEnter ()
+	 rot = 0;
+	 locked = false;
+	 onTravel = false;
+	 --Debug.Log(locked);
+end
+
+function OnFixedUpdate()
+    if locked == false then
+        if  owner.cachedLuaMonoBinder.GetScriptGlobal ("initPos") != 0 and owner.cachedLuaMonoBinder.GetScriptGlobal ("reset") == true then
+            owner.cachedTransform.position = Vector3.Lerp(owner.cachedTransform.position, owner.cachedLuaMonoBinder.GetScriptGlobal ("initPos"), 0.15);
+            if (Mathf.Abs(owner.cachedTransform.position.y - owner.cachedLuaMonoBinder.GetScriptGlobal ("initPos").y) < 0.5) and (Mathf.Abs(owner.cachedTransform.position.x - owner.cachedLuaMonoBinder.GetScriptGlobal ("initPos").x) < 0.5) then
+				rot = 0;
+				onTravel = false;
+                piece.CallFunction ("setReset", false);
+            end
+        end
+		rotating = false;
+        if  owner.cachedLuaMonoBinder.GetScriptGlobal ("targetPos") != nil then
+			if owner.cachedTransform.position.x > (owner.cachedLuaMonoBinder.GetScriptGlobal ("targetPos").position.x - (owner.cachedLuaMonoBinder.GetScriptGlobal ("targetPos").rect.width * owner.cachedLuaMonoBinder.GetScriptGlobal ("scaler"))/2) and
+			owner.cachedTransform.position.x < (owner.cachedLuaMonoBinder.GetScriptGlobal ("targetPos").position.x + (owner.cachedLuaMonoBinder.GetScriptGlobal ("targetPos").rect.width * owner.cachedLuaMonoBinder.GetScriptGlobal ("scaler"))/2) and
+			owner.cachedTransform.position.y > (owner.cachedLuaMonoBinder.GetScriptGlobal ("targetPos").rect.yMin + owner.cachedLuaMonoBinder.GetScriptGlobal ("targetPos").position.y) and
+			owner.cachedTransform.position.y < (owner.cachedLuaMonoBinder.GetScriptGlobal ("targetPos").rect.yMax + owner.cachedLuaMonoBinder.GetScriptGlobal ("targetPos").position.y) and
+			onTravel == false then
+				if texter.text == "true" then
+					owner.cachedLuaMonoBinder.CallFunction ("setCorrect", h);
+					locked = true;
+					owner.cachedFSM.SetState ("Locked");
+				else
+					owner.cachedLuaMonoBinder.CallFunction ("setError", h);
+					onTravel = true;
+					owner.cachedLuaMonoBinder.CallFunction ("setReset", true);
+				end
+            end
+        end
+    end
+end

@@ -1,0 +1,9 @@
+﻿function StartMiniGame ()
+	PuzzleManager.CallFunction ("EnableSpawn", true);
+	PuzzleManager.CallFunction("SpawnElements");
+ 	--MiniGameManager.StartTimer (90);
+end
+
+function Reset ()
+	PuzzleManager.CallFunction ("Reset");
+end

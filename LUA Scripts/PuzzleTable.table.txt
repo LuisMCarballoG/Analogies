@@ -1,0 +1,23 @@
+﻿-- Array of structs like declaration in Lua
+puzzles1 = {};
+
+puzzles1[00] = { illustration = girl,	texte = "She : girl as He : ", answerTexte = "She : girl as He : boy",								img = boy,			ans = "boy"};
+puzzles1[01] = { illustration = sky,		texte = "helicopter : sky as submarine : ", answerTexte = "helicopter : sky as submarine : sea ",	img = sea,		ans = "sea"};
+puzzles1[02] = { illustration = mars,	texte = "Alien : Mars as human : ", answerTexte = "Alien : Mars as human : Earth ",					img = earth,		ans = "Earth"};
+puzzles1[03] = { illustration = hourglass, texte = "Turtle : slow as rabbit : ", answerTexte = "Turtle : slow as rabbit : fast ",			img = velocimeter,	ans = "fast"};
+puzzles1[04] = { illustration = grass,	texte = "Soccer : grass as hockey : ", answerTexte = "Soccer : grass as hockey : ice ",				img = ice,			ans = "ice"};
+puzzles1[05] = { illustration = sea,		texte = "water : ocean as sand : ", answerTexte = "water : ocean as sand : desert. ",			img = desert,		ans = "desert"};
+puzzles1[06] = { illustration = music,	texte = "Guitar : music as brush : ", answerTexte = "Guitar : music as brush : painting ",			img = painting,		ans = "painting"};
+
+puzzles2 = {};
+
+puzzles2[00] = { illustration = mars,		texte = "Alien : Mars as human : ", answerTexte = "Alien : Mars as human : Earth",				img = earth,		ans = "Earth"};
+puzzles2[01] = { illustration = apple,		texte = "Red: apple as yellow : ", answerTexte = "Red: apple as yellow : Banana",				img = banana,		ans = "Banana"};
+puzzles2[02] = { illustration = batman,		texte = "Bat : Batman as ant : ", answerTexte = "Bat : Batman as ant : Antman",					img = antman,		ans = "Antman"};
+puzzles2[03] = { illustration = baby,		texte = "Baby : human as egg : ", answerTexte = "Baby : human as egg : Bird",					img = bird,			ans = "Bird"};
+puzzles2[04] = { illustration = hospital,	texte = "Nurse : hospital as teacher : ", answerTexte = "Nurse : hospital as teacher : School",	img = school,		ans = "School"};
+puzzles2[05] = { illustration = lake,		texte = "Boat : lake as plane :", answerTexte = "Boat : lake as plane : Sky",					img = sky,			ans = "Sky"};
+puzzles2[06] = { illustration = kangoroo,	texte = "Kangaroo : hop as dolphin : ", answerTexte = "Kangaroo : hop as dolphin : Swim",		img = dolphin,		ans = "Swim"};
+puzzles2[07] = { illustration = siblings,	texte = "Brother : sister as father : ", answerTexte = "Brother : sister as father : Mother",	 img = parents,		ans = "Mother"};
+puzzles2[08] = { illustration = skyline,	texte = "Building : city as barn : ", answerTexte = "Building : city as barn : Country",			img = countryside,	ans = "Country"};
+puzzles2[09] = { illustration = car,		texte = "Car : move as chair : ", answerTexte = "Car : move as chair : Rest",					img = chair,		ans = "Rest"};

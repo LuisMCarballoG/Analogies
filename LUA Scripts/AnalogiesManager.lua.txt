@@ -1,0 +1,236 @@
+﻿--[[
+
+	AnalogiesManager.lua.txt
+
+	This script is used to set up and manage the game.
+	By Diego Cuellar.
+
+--]]
+
+
+--Public Variables
+	--prefabToSpawn
+	--maxSpawned		--max answers to spawn
+	--prefabContainer	--answer container
+	--answer1			--hint to current answer transform holder
+	--logicManager		--reference to general game logic
+	--puzzleToSpawn	
+	--textContainer		--text hint holder
+	--answerContainer	
+	--optionContainer
+	--PuzzleManager
+	--FigureManager
+	--canvas			--canvas reference
+
+
+--Local Variables
+	local prefabPool = Nil; 
+	currentPiece = 0;
+	newPiece = 0;
+	isNotTheSame = false;
+	oks = 0;
+	errors = 0;
+	totalOks = 5;
+	totalErrors = 3;
+	fakes = {};
+	figureCounter = 1;
+	local currentAnswer = 0;
+
+----[[Overrided Methods]]----
+
+--Select puzzle pool to use
+--initial setup according to selected pool
+function Awake ()
+    prefabPool = PoolManager.CreatePoolForPrefab (prefabToSpawn);
+	puzzlePool = PoolManager.CreatePoolForPrefab (puzzleToSpawn);
+	
+	maxSpawned = 4;
+
+	fakes[0] = { img = alien, ans = "Alien" };
+	fakes[1] = { img = boy, ans = "Boy" };
+	fakes[2] = { img = cat, ans = "Cat" };
+	fakes[3] = { img = desert, ans = "Desert" };
+	fakes[4] = { img = earth, ans = "Earth" };
+	fakes[5] = { img = football, ans = "Football" };
+	fakes[6] = { img = girl, ans = "Girl" };
+	fakes[7] = { img = grass, ans = "Grass" };
+	fakes[8] = { img = hockey, ans = "Hockey" };
+	fakes[9] = { img = hourglass, ans = "Hourglass" };
+	fakes[10] = { img = ice, ans = "Ice" };
+	fakes[11] = { img = mars, ans = "Mars" };
+	fakes[12] = { img = music, ans = "Music" };
+	fakes[13] = { img = sea, ans = "Sea" };
+	fakes[14] = { img = sky, ans = "Sky" };
+	fakes[15] = { img = velocimeter, ans = "Velocimeter" };
+
+	fakes[16] = { img = baby, ans = "Baby" };
+	fakes[17] = { img = antman, ans = "Antman" };
+	fakes[18] = { img = apple, ans = "Apple" };
+	fakes[19] = { img = banana, ans = "Banana" };
+	fakes[20] = { img = batman, ans = "Batman" };
+	fakes[21] = { img = bird, ans = "Bird" };
+	fakes[22] = { img = car, ans = "Car" };
+	fakes[23] = { img = chair, ans = "Chair" };
+	fakes[24] = { img = countryside, ans = "Countryside" };
+	fakes[25] = { img = dolphin, ans = "Dolphin" };
+	fakes[26] = { img = egg, ans = "Egg" };
+	fakes[27] = { img = hospital, ans = "Hospital" };
+	fakes[28] = { img = kangoroo, ans = "Kangoroo" };
+	fakes[29] = { img = lake, ans = "Lake" };
+	fakes[30] = { img = parents, ans = "Parents" };
+	fakes[31] = { img = school, ans = "School" };
+	fakes[32] = { img = siblings, ans = "Siblings" };
+	fakes[33] = { img = skyline, ans = "Skyline" };
+	fakes[34] = { img = painting, ans = "Painting" };
+
+	randomFakes = UniqueRandomSequence.__new (#fakes);
+
+	rect = {};
+	rect[0] = Vector3.__new (0,0,0);
+	rect[1] = Vector3.__new (0,0,0);
+	rect[2] = Vector3.__new (0,0,0);
+	rect[3] = Vector3.__new (0,0,0);
+	
+end
+
+function Start()
+	Debug.Log(#puzzles)
+	for i = 1, #puzzles do
+		MiniGameManager.CheckExercise(i, puzzles[i].difficulty)
+	end
+	
+	random = puzzles[MiniGameManager.GetExerciseId()]
+end
+
+function SpawnElements()
+	PuzzleManager.DespawnAll ();
+	FigureManager.DespawnAll ();
+	figureCounter = 1;
+
+	for i=0, maxSpawned do
+		-- Spawn puzzle figures and assign values
+		
+		randomFake = fakes[randomFakes.nextValue];
+
+		if  puzzlePool.spawnedCount < 1 then
+			local puzzlePiece = PuzzleManager.SpanwAt (puzzleToSpawn, Vector3.__new (0,0,0), Quaternion.identity, answerContainer.transform);
+			imageHolder = puzzlePiece.GetComponent ("LuaMonoBehaviourBinder").GetScriptGlobal ("image");
+
+			imageHolder.sprite = random.illustration;
+				
+			puzzlePiece.GetComponent ("LuaMonoBehaviourBinder").CallFunction ("setOption", 1, answer1);
+			puzzlePiece.GetComponent ("LuaMonoBehaviourBinder").cachedTransform.offsetMin = Vector2.__new (10,10);
+			puzzlePiece.GetComponent ("LuaMonoBehaviourBinder").cachedTransform.offsetMax = Vector2.__new (-10,-10);
+				
+			answer1 = puzzlePiece.GetComponent ("LuaMonoBehaviourBinder").cachedTransform;
+		end
+
+		--textContainer.text = random.texte;
+
+		-- Spawn user figures and assign values
+		if  prefabPool.spawnedCount < 3 then
+			local figure = FigureManager.SpanwAt (prefabToSpawn, Vector3.__new (0,0,0), Quaternion.identity, prefabContainer.transform);
+			imageHolder = figure.GetComponent ("LuaMonoBehaviourBinder").GetScriptGlobal ("image");
+			textHolder = figure.GetComponent ("LuaMonoBehaviourBinder").GetScriptGlobal ("texter");
+			if Random.Range(0,2) == 1 then
+				figure.transform.SetAsFirstSibling();
+			end
+			if figureCounter == 1 then
+				imageHolder.sprite = random.img;
+				textHolder.text = random.texte;
+				figure.GetComponent ("LuaMonoBehaviourBinder").CallFunction ("setOption", 1, optionContainer, canvas.scaleFactor, random.ans, random.texte);
+			else
+				if randomFake == random.img then
+					randomFake = fakes[randomFakes.nextValue];
+				end
+				imageHolder.sprite = randomFake.img;
+				textHolder.text = " ";
+				figure.GetComponent ("LuaMonoBehaviourBinder").CallFunction ("setOption", 2, optionContainer, canvas.scaleFactor, randomFake.ans, random.texte); --answer2
+			end
+			figureCounter = figureCounter + 1;
+		end
+		
+	end
+end
+
+function Update ()
+	-- Checked manipulated piece and tack back the other in case it exists
+    if currentPiece == 0 then
+        currentPiece = newPiece;
+    else
+        if currentPiece ~= newPiece and isNotTheSame == false then
+            currentPiece.GetComponent ("LuaMonoBehaviourBinder").CallFunction ("setReset", true);
+            isNotTheSame = true;
+        elseif currentPiece ~= newPiece and isNotTheSame == true then
+            currentPiece = newPiece;
+            isNotTheSame = false;
+        end
+    end
+end
+
+--Change element foccus for drag
+function setCurrentPiece (piece)
+    newPiece = piece;
+end
+
+function Score(e)
+    oks = oks + 1;
+	textContainer.text = random.answerTexte;
+	
+    MiniGameManager.MarkAssert ();
+
+	currentAnswer = currentAnswer +1;
+	prefabPool = Nil; 
+	currentPiece = 0;
+	newPiece = 0;
+	isNotTheSame = false;
+	currentAnswer = 0;
+
+	figureCounter = 1;
+	prefabPool = PoolManager.CreatePoolForPrefab (prefabToSpawn);
+	puzzlePool = PoolManager.CreatePoolForPrefab (puzzleToSpawn);
+	
+	random = puzzles[MiniGameManager.GetExerciseId()];
+
+	maxSpawned = 4;
+	owner.CallFunctionWithDelay ("SpawnElements", 1);
+	
+	if oks >=totalOks then
+        owner.CallFunctionWithDelay ("EndPresentation", 0);
+    end
+end
+
+function Error(e)
+	errors = errors +1;
+	MiniGameManager.TakeLive ();
+	if errors >=totalErrors then
+
+    end
+end
+
+function EndPresentation()
+	owner.CallFunctionWithDelay ("EndGame", 1);
+end
+
+function EndGame()
+	logicManager.EndMiniGame ();    
+end
+
+function Reset ()
+	prefabPool = Nil; 
+	currentPiece = 0;
+	newPiece = 0;
+	isNotTheSame = false;
+	oks = 0;
+	errors = 0;
+
+	figureCounter = 1;
+	
+	prefabPool = PoolManager.CreatePoolForPrefab (prefabToSpawn);
+	puzzlePool = PoolManager.CreatePoolForPrefab (puzzleToSpawn);
+
+	random = puzzles[MiniGameManager.GetExerciseId()];
+
+	maxSpawned = 4;
+	SpawnElements();
+end

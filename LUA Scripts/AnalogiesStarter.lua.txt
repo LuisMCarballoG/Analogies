@@ -1,0 +1,7 @@
+﻿function StartMiniGame ()
+	PuzzleManager.CallFunction("SpawnElements");
+end
+
+function Reset ()
+	PuzzleManager.CallFunction ("Reset");
+end

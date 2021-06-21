@@ -1,0 +1,108 @@
+﻿local screenPoint;
+local offset;
+local dragged = false;
+local validDrag = false;
+
+local Direction = {
+    None = 0,
+    Left = 1,
+    Right = 2,
+    Up = 3,
+    Down = 4
+}
+
+local swipeDirection;
+local answer;
+reset = false;
+local option = 0;
+local targerPos = Nil;
+onClicked = false;
+
+initPos = 0;
+firtTimeInteraction = false;
+correct = false;
+used = false;
+
+textToTip = 0;
+biggerText = 0;
+
+function OnSpawn ()    
+    owner.cachedFSM.SetState ("Idle");
+	 dragged = false;
+	 validDrag = false;
+	reset = false;
+	 option = 0;
+	onClicked = false;
+	used = false;
+	initPos = 0;
+	firtTimeInteraction = false;
+	correct = false;
+	image.color = HSVColor.__new (0.0,0.0,.999).ToColor ();
+end
+
+function OnMouseDown(param)
+    if correct == false and reset == false and used == false and onClicked == false then
+        if firtTimeInteraction == false then
+            initPos = owner.cachedTransform.position;
+            firtTimeInteraction = true;
+        end
+        screenPoint = Input.mousePosition;
+        GameObject.Find ("Puzzle Logic").GetComponent ("LuaMonoBehaviourBinder").CallFunction ("setCurrentPiece", pieceObject);
+        onClicked = true;
+		textHolder.text = biggerText..textToTip;
+	end
+end
+
+function OnMouseDrag(param)
+	--Debug.Log(owner.cachedLuaFSMStateBinder.locked);
+    if correct == false and reset == false and used == false and onClicked == true then
+        local curScreenPoint = Camera.main.ScreenToWorldPoint (Vector3.__new (Input.mousePosition.x, Input.mousePosition.y, -Camera.main.transform.position.z));
+        local curPosition = curScreenPoint - owner.cachedTransform.position;
+
+        owner.cachedTransform.position = Vector3.__new( Input.mousePosition.x, Input.mousePosition.y, owner.cachedTransform.position.z);
+    end
+end
+
+function OnMouseUp (param)
+    onClicked = false;
+end
+
+function setReset (param)
+    reset = param;
+end
+
+function setOption (param, position, canvasScaler, tip, holder)
+    option = param;
+    targetPos = position;
+    targetRot = position.rotation;
+	scaler = canvasScaler;
+
+	textToTip = tip;
+	biggerText = holder;
+	textHolder = GameObject.Find("TextHolder").GetComponent("Text");
+	textHolder.text = biggerText.."______";
+
+	if param == 1 then
+		texter.text = "true";
+	else
+		texter.text = "fake";
+	end
+end
+
+function setCorrect (param)
+    correct = true;
+    local feedback = Nil;
+    --feedback = FeedbackManager.ShowPositiveFeedback ("", owner.cachedTransform.localPosition, GameObject.Find ("AnswerContainer").GetComponent("Transform")); 
+	feedback = FeedbackManager.ShowPositiveFeedback ("", targetPos.localPosition, GameObject.Find ("AnswerContainer").GetComponent("Transform")); 
+    GameObject.Find ("Puzzle Logic").GetComponent ("LuaMonoBehaviourBinder").CallFunction ("Score", e); 
+end
+
+function setError (param)
+	local feedback = Nil;
+	used = true;
+	textHolder.text = biggerText.."______";
+	image.color = HSVColor.__new (0.0,0.0,.4).ToColor ();
+    --feedback = FeedbackManager.ShowNegativeFeedback ("", owner.cachedTransform.localPosition, GameObject.Find ("AnswerContainer").GetComponent("Transform")); 
+	feedback = FeedbackManager.ShowNegativeFeedback ("", targetPos.localPosition, GameObject.Find ("AnswerContainer").GetComponent("Transform")); 
+    GameObject.Find ("Puzzle Logic").GetComponent ("LuaMonoBehaviourBinder").CallFunction ("Error", e); 
+end

@@ -1,0 +1,8 @@
+﻿function OnEnter ()	
+	--Debug.Log("locked");
+end
+function OnUpdate ()
+		owner.cachedTransform.position = Vector3.Lerp(owner.cachedTransform.position, owner.cachedLuaMonoBinder.GetScriptGlobal ("targetPos").position, 0.05);
+		owner.cachedTransform.rotation = Quaternion.Lerp(owner.cachedTransform.rotation, owner.cachedLuaMonoBinder.GetScriptGlobal ("targetRot"), 0.05);
+		--Debug.Log("coso");
+end
